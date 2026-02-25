@@ -1,0 +1,59 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAuthed() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthed() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
+    }
+
+    function isOwner(uid) {
+      return isAuthed() && request.auth.uid == uid;
+    }
+
+    match /users/{uid} {
+      allow create: if isOwner(uid) &&
+        request.resource.data.role == "member";
+      allow read: if isOwner(uid) || isAdmin();
+      allow update: if isAdmin() || (
+        isOwner(uid) &&
+        request.resource.data.role == resource.data.role
+      );
+      allow delete: if isAdmin();
+    }
+
+    match /trainers/{trainerId} {
+      allow read: if isAuthed();
+      allow write: if isAdmin();
+    }
+
+    match /exercises/{exerciseId} {
+      allow read: if isAuthed();
+      allow write: if isAdmin();
+    }
+
+    match /plans/{planId} {
+      allow create: if isAuthed() && request.resource.data.uid == request.auth.uid;
+      allow read: if isAuthed() &&
+        (resource.data.uid == request.auth.uid || isAdmin());
+      allow update: if isAuthed() &&
+        resource.data.uid == request.auth.uid &&
+        request.resource.data.uid == request.auth.uid;
+      allow delete: if isAuthed() && resource.data.uid == request.auth.uid;
+    }
+
+    match /entries/{entryId} {
+      allow create: if isAuthed() &&
+        request.resource.data.uid == request.auth.uid;
+      allow read: if isAuthed() &&
+        (resource.data.uid == request.auth.uid || isAdmin());
+      allow update: if isAuthed() &&
+        resource.data.uid == request.auth.uid &&
+        request.resource.data.uid == request.auth.uid;
+      allow delete: if isAuthed() && resource.data.uid == request.auth.uid;
+    }
+  }
+}
