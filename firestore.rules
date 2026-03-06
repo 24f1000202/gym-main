@@ -55,5 +55,99 @@ service cloud.firestore {
         request.resource.data.uid == request.auth.uid;
       allow delete: if isAuthed() && resource.data.uid == request.auth.uid;
     }
+
+    match /dashboardAnnouncements/{docId} {
+      allow read: if isAuthed();
+      allow write: if isAdmin();
+    }
+
+    match /dashboardClassTimeline/{docId} {
+      allow read: if isAuthed();
+      allow write: if isAdmin();
+    }
+
+    match /dashboardTransformations/{docId} {
+      allow read: if isAuthed();
+      allow write: if isAdmin();
+    }
+
+    match /dashboardPhotos/{docId} {
+      allow read: if isAuthed();
+      allow write: if isAdmin();
+    }
+
+    match /dashboardNutrition/{docId} {
+      allow create: if isAuthed() && request.resource.data.uid == request.auth.uid;
+      allow read: if isAuthed() &&
+        (resource.data.uid == request.auth.uid || isAdmin());
+      allow update: if isAuthed() &&
+        (isAdmin() || (resource.data.uid == request.auth.uid &&
+        request.resource.data.uid == request.auth.uid));
+      allow delete: if isAuthed() && (resource.data.uid == request.auth.uid || isAdmin());
+    }
+
+    match /dashboardGoalRings/{docId} {
+      allow create: if isAuthed() && request.resource.data.uid == request.auth.uid;
+      allow read: if isAuthed() &&
+        (resource.data.uid == request.auth.uid || isAdmin());
+      allow update: if isAuthed() &&
+        (isAdmin() || (resource.data.uid == request.auth.uid &&
+        request.resource.data.uid == request.auth.uid));
+      allow delete: if isAuthed() && (resource.data.uid == request.auth.uid || isAdmin());
+    }
+
+    match /dashboardAchievements/{docId} {
+      allow create: if isAuthed() && request.resource.data.uid == request.auth.uid;
+      allow read: if isAuthed() &&
+        (resource.data.uid == request.auth.uid || isAdmin());
+      allow update: if isAuthed() &&
+        (isAdmin() || (resource.data.uid == request.auth.uid &&
+        request.resource.data.uid == request.auth.uid));
+      allow delete: if isAuthed() && (resource.data.uid == request.auth.uid || isAdmin());
+    }
+
+    match /dashboardHealthSnapshots/{docId} {
+      allow create: if isAuthed() && request.resource.data.uid == request.auth.uid;
+      allow read: if isAuthed() &&
+        (resource.data.uid == request.auth.uid || isAdmin());
+      allow update: if isAuthed() &&
+        (isAdmin() || (resource.data.uid == request.auth.uid &&
+        request.resource.data.uid == request.auth.uid));
+      allow delete: if isAuthed() && (resource.data.uid == request.auth.uid || isAdmin());
+    }
+
+    match /dashboardSpotlights/{docId} {
+      allow create: if isAuthed() && request.resource.data.uid == request.auth.uid;
+      allow read: if isAuthed() &&
+        (resource.data.uid == request.auth.uid || isAdmin());
+      allow update: if isAuthed() &&
+        (isAdmin() || (resource.data.uid == request.auth.uid &&
+        request.resource.data.uid == request.auth.uid));
+      allow delete: if isAuthed() && (resource.data.uid == request.auth.uid || isAdmin());
+    }
+
+    match /dashboardExerciseSelections/{docId} {
+      allow create: if isAuthed() && request.resource.data.uid == request.auth.uid;
+      allow read: if isAuthed() &&
+        (resource.data.uid == request.auth.uid || isAdmin());
+      allow update: if isAuthed() &&
+        (isAdmin() || (resource.data.uid == request.auth.uid &&
+        request.resource.data.uid == request.auth.uid));
+      allow delete: if isAuthed() && (resource.data.uid == request.auth.uid || isAdmin());
+    }
+
+    match /dashboardKanbanBoards/{uid} {
+      allow create: if isOwner(uid);
+      allow read: if isOwner(uid) || isAdmin();
+      allow update: if isAdmin() || isOwner(uid);
+      allow delete: if isAdmin() || isOwner(uid);
+    }
+
+    match /dashboardActionLogs/{docId} {
+      allow create: if isAuthed() && request.resource.data.uid == request.auth.uid;
+      allow read: if isAuthed() &&
+        (resource.data.uid == request.auth.uid || isAdmin());
+      allow update, delete: if false;
+    }
   }
 }
